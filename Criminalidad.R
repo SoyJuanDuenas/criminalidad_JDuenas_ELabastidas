@@ -2,9 +2,12 @@
 #Esteban Labastidas-Juan Dueñas
 #Ultima fecha de modificación:24/11/2023
 library(pacman)
-pacman::p_load(raster, rgdal, rgeos, stringr, sf, tidyverse, RColorBrewer, cowplot, ggpubr,
+pacman::p_load(leaflet, raster, rgdal, rgeos, stringr, sf, tidyverse, RColorBrewer, cowplot, ggpubr,
                ggspatial, rnaturalearth, rnaturalearthdata,dplyr,readxl,stringr,dplyr,cowplot,stringr,ggplot2,fpc,haven,Hmisc)
-ruta<- "C:\\Users\\57314\\Documents\\Investigacion\\Criminalidad en transporte publico\\1107  SISTEMA DELICTIVO TRANSPORTE PUBLICO (1).xlsx"
+#Establecemos la ruta donde se encuentra nuestro repositorio con el fin de ahora en adelante manejar rutas globales
+setwd("C:/Users/PC/Documents/repos/criminalidad_JDuenas_ELabastidas")
+print(getwd())
+ruta<- "data/1107  SISTEMA DELICTIVO TRANSPORTE PUBLICO (1).xlsx"
 datos<-read_excel(ruta,skip=10)
 datos<-datos[-c(71430:71433),]
 datos<- datos %>%
@@ -12,7 +15,7 @@ datos<- datos %>%
 table(datos$nombre_barrio)
 
 #barrios --------------------------------------------------------------------------------------------
-ruta2<- "C:\\Users\\57314\\Downloads\\estaciones-de-transmilenio\\estaciones-de-transmilenio.shp"
+ruta2<- "data/estaciones-de-transmilenio/estaciones-de-transmilenio.shp"
 barrios<-st_read(ruta2)
 barrios$numero_barrio<-barrios$fid
 # Convertir la columna 'numero_barrio' en 'datos' a tipo de dato character
@@ -38,8 +41,8 @@ delitos_por_estacion_anio <- datos_unidos %>%
 estaciones_ano<- left_join(delitos_por_estacion_anio, barrios, by = "numero_barrio")
 
 #Uniendo los datos a estaciones ----------------------------------------------------
-file.choose()
-rutaestaciones<-"C:\\Users\\57314\\Downloads\\Estaciones_Troncales_de_TRANSMILENIO.csv"
+#file.choose()
+rutaestaciones<-"data/Estaciones_Troncales_de_TRANSMILENIO.csv"
 estaciones<-read.csv(rutaestaciones)
 
 
@@ -47,11 +50,8 @@ estaciones<-read.csv(rutaestaciones)
 
 
 #Creando mapas----------------------------------------------------------------------
-rutash<-"C:\\Users\\57314\\Downloads\\barriolegalizado\\BarrioLegalizado.shp"
+rutash<-"data/barriolegalizado/BarrioLegalizado.shp"
 datosbogota<-st_read(rutash)
-install.packages("leaflet")
-library(leaflet)
-
 
 # Crea el mapa de Bogotá
 mapa_bogota <- leaflet() %>%
@@ -83,21 +83,22 @@ mapa_bogota
 
 
 
+#Vamos a comentar lo de abajo porque el mapa no sale apropiadamente y por ende antes de exportar debemos tener que el mapa funcione
+#Adecuadamente
 
 
-
-
-directorio <- getwd()
-
-# Guardar como CSV en el directorio actual
-write.csv(estaciones_ano, file.path(directorio, "estaciones_ano.csv"), row.names = FALSE)
-
-
-
-#datos
-library(writexl)
-library(haven)
-write_xlsx(datos_unidos)
-ruta_dta <- file.path(getwd(), "datos_unidos.dta")
-write_dta(datos_unidos, ruta_dta)
+#
+#directorio <- getwd()
+#
+## Guardar como CSV en el directorio actual
+#write.csv(estaciones_ano, file.path(directorio, "estaciones_ano.csv"), row.names = FALSE)
+#
+#
+#
+##datos
+#library(writexl)
+#library(haven)
+#write_xlsx(datos_unidos)
+#ruta_dta <- file.path(getwd(), "datos_unidos.dta")
+#write_dta(datos_unidos, ruta_dta)
 
